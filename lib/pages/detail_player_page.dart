@@ -1,6 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/players.dart';
 
 class DetailPlayer extends StatelessWidget {
@@ -11,112 +11,55 @@ class DetailPlayer extends StatelessWidget {
     final players = Provider.of<Players>(context, listen: false);
     final playerId = ModalRoute.of(context)!.settings.arguments as String;
     final selectPLayer = players.selectById(playerId);
-    final TextEditingController imageController = TextEditingController(
-      text: selectPLayer.imageUrl,
-    );
-    final TextEditingController nameController = TextEditingController(
-      text: selectPLayer.name,
-    );
-    final TextEditingController positionController = TextEditingController(
+
+    final nameController = TextEditingController(text: selectPLayer.name);
+    final positionController = TextEditingController(
       text: selectPLayer.position,
     );
+    final imageController = TextEditingController(text: selectPLayer.imageUrl);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "DETAIL PLAYER",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-        ),
-        centerTitle: true,
-        backgroundColor: Color(0xFF0075FC),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(imageController.text),
-                      ),
-                    ),
+      appBar: AppBar(title: Text("DETAIL PLAYER")),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: MemoryImage(base64Decode(selectPLayer.imageUrl)),
                   ),
                 ),
-                TextFormField(
-                  autocorrect: false,
-                  autofocus: true,
-                  decoration: InputDecoration(labelText: "Nama"),
-                  textInputAction: TextInputAction.next,
-                  controller: nameController,
-                ),
-                TextFormField(
-                  autocorrect: false,
-                  decoration: InputDecoration(labelText: "Posisi"),
-                  textInputAction: TextInputAction.next,
-                  controller: positionController,
-                ),
-                TextFormField(
-                  autocorrect: false,
-                  decoration: InputDecoration(labelText: "Image URL"),
-                  textInputAction: TextInputAction.done,
-                  controller: imageController,
-                  onEditingComplete: () {
-                    players
-                        .editPlayer(
-                          playerId,
-                          nameController.text,
-                          positionController.text,
-                          imageController.text,
-                          context,
-                        )
-                        .then((value) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Berhasil diubah"),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          Navigator.pop(context);
-                        });
-                  },
-                ),
-                SizedBox(height: 50),
-                Container(
-                  width: double.infinity,
-                  alignment: Alignment.centerRight,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      players
-                          .editPlayer(
-                            playerId,
-                            nameController.text,
-                            positionController.text,
-                            imageController.text,
-                            context,
-                          )
-                          .then((value) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Berhasil diubah"),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            Navigator.pop(context);
-                          });
-                    },
-                    child: Text("Edit", style: TextStyle(fontSize: 18)),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+
+            SizedBox(height: 20),
+
+            TextFormField(controller: nameController),
+            TextFormField(controller: positionController),
+            TextFormField(controller: imageController),
+
+            SizedBox(height: 30),
+
+            ElevatedButton(
+              onPressed: () {
+                players.editPlayer(
+                  playerId,
+                  nameController.text,
+                  positionController.text,
+                  imageController.text,
+                  context,
+                );
+                Navigator.pop(context);
+              },
+              child: Text("Edit"),
+            ),
+          ],
         ),
       ),
     );

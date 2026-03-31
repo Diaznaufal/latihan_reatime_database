@@ -1,12 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- 🔥 TAMBAHAN WAJIB -->
+    <!-- 🔥 INTERNET -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- 🔥 GALERI (ANDROID 13+) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+    <!-- 🔥 BACKUP (ANDROID < 13) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:label="flutter_application_1"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true"> <!-- 🔥 WAJIB UNTUK CROPPER -->
 
         <activity
             android:name=".MainActivity"
